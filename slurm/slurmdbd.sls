@@ -1,4 +1,6 @@
 {% from "slurm/map.jinja" import slurm with context %}
+include:
+  - slurm
 
 minion:
   pkg.installed:
@@ -18,7 +20,7 @@ minion:
       - file: /etc/salt/minion.d/database.conf
       
       
-slrumdbd_mysql:
+slurmdbd_mysql:
   pkg.installed:
    - name: {{ slurm.pkgMysqlSever }}
    - pkgs:
@@ -47,31 +49,35 @@ slrumdbd_mysql:
       - mysql_database: slurm_acct_db
     - requiere: 
       - mysql_database: slurm_acct_db
-      
 
-
-slurmdbd.conf:
+slurm_slurmdbd_config:
   file.managed:
-    - name: /etc/slurm/slurmdbd.conf
+    - name: {{slurm.etcdir}}/slurmdbd.conf
     - user: root
     - group: root
     - mode: '644'
     - replace: True
     - template: jinja 
     - source: salt://slurm/files/slurmdbd.conf
-
+    - context:
+        slurm: {{ slurm }}
 
 Bug_rpm_no_create_default_environment_slurmdbd:
   file.touch:
     - name: /etc/default/slurmdbd
     - onlyif:  'test ! -e /etc/default/slurmdbd'
+    - require:
+      - pkg: slurm_slurmdbd
+    - require_in:
+      - service: slurm_slurmdbd
+
 
 slurmdbd:
   pkg.installed:
     - name: {{ slurm.pkgSlurmDBD }}
     - pkgs:
       - {{ slurm.pkgSlurmSQL }}
-      - {{ slurm.pkgSlurmDBD }}       
+      - {{ slurm.pkgSlurmDBD }}
   service:
     - running
     - enable: true
@@ -81,7 +87,7 @@ slurmdbd:
       - file: /etc/slurm/slurmdbd.conf
     - require:
       - pkg: {{ slurm.pkgSlurmDBD }}
-       {%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
+      {%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
       - service: munge
       {%endif %}
       - file: /etc/slurm/slurmdbd.conf
@@ -96,4 +102,11 @@ slurmdbd:
     - onlyif:
        - file: exist_default_slurmdb
   
-  
+slurmdbd_config_logrotate_slurmdbd:
+  file.managed:
+    - name: /etc/logrotate.d/slurmdbd
+    - user: root
+    - group: root
+    - mode: '644'
+    - template: jinja
+    - source: salt://slurm/files/slurmdbd-logrotate.log

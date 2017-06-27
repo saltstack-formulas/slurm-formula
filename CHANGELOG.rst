@@ -1,5 +1,12 @@
 slurm formula
 ================
+0.1.3 (2017-06-27)
+ - new nodes definition
+ - new partition organization
+ - slurmdbd.conf repared some bugs
+ - add gres.conf
+ - add acc_gather.conf
+ - add new fetures slurm.conf
 0.0.2 (2015-12-14)
  - munge dependences repared
  - slurmd macro repared

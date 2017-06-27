@@ -1,6 +1,6 @@
 {% from "slurm/map.jinja" import slurm with context %}
 
-client:
+slurm_client:
   pkg.installed:
     - name: {{ slurm.pkgSlurm }}
     - pkgs:
@@ -10,87 +10,62 @@ client:
       {% endif %}
       - {{ slurm.pkgSlurmPlugins }}
     - refresh: True
+
+slurm_config:
   file.managed:
-    - name: {{ slurm.config }}
+    - name: {{slurm.etcdir}}/{{ slurm.config }}
     - user: slurm
     - group: root
     - mode: '644'
     - template: jinja 
     - source: salt://slurm/files/slurm.conf
-
+    - context:
+        slurm: {{ slurm }}
+{% if slurm.user_create|default(False) == True %}
+slurm_user:
   user.present:
     - name: slurm
-    - home: /localhome/slurm
-    - uid: 550
-    - gid: 510
+{% if slurm.homedir is defined %}
+    - home: {{ slurm.user_homedir }}
+{% endif %}
+{% if slurm.user_uid is defined %}
+    - uid: {{ slurm.user_uid }}
+{% endif %}
+{% if slurm.user_gid is defined %}
+    - gid: {{ slurm.user_gid }}
+{% else %}
     - gid_from_name: True
+{% endif %}
+    - require_in:
+        - pkg: slurm_client
+        - file: slurm_topology
+        - file: slurm_cgroup
+        - file: slurm_config_energy
+{% endif %}
 
-    
-#because the rpm not create directory
-/var/run/slurm/:
+#  user.present:
+#    - name: slurm
+#    - home: /localhome/slurm
+#    - uid: 550
+#    - gid: 510
+#    - gid_from_name: True
+
+
+slurm_gres_conf:
+  file.managed:
+    - name: {{ slurm.gres_config }}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - template: jinja
+    - source: salt://slurm/files/gres.conf
+
+
+
+
+slurm_logdir:
   file.directory:
-    - name: 
+    - name: {{ slurm.logdir }}
     - user: slurm
-    - group: root
-    - makedirs: true
-
-
-{%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
-munge:
-  pkg:
-   - installed
-  service:
-    - running
-    - name: munge
-    - enable: True
-    - reload: True
-    - watch:
-      - file: /etc/munge/munge.key
-    - require:
-      - pkg: {{ slurm.pkgMunge }}
-      - file: /etc/munge/munge.key
-  file.managed:
-    - name: /etc/munge/munge.key
-    - user: munge
-    - group: munge
-    - mode: 400
-    - template: jinja
-    - source: salt://slurm/files/munge.key 
-    - require:
-      - pkg: {{ slurm.pkgMunge }}
-{% endif %}
-
-{% if salt['pillar.get']('slurm:TopologyPlugin') in ['tree','3d_torus'] -%}
-topolgy:
-  file.managed:
-    - name: /etc/slurm/topology.conf
-    - user: slurm
-    - group: root
-    - mode: '0644'
-    - source: salt://slurm/files/topology.conf
-    - require:
-      - pkg: {{ slurm.pkgSlurm }}
-{% endif %}
-
-{% if salt['pillar.get']('slurm:TaskPlugin') in ['cgroup'] -%}
-cgroup::
-  file.managed:
-    - name: /etc/slurm/cgroup.conf   
-    - user: slurm
-    - group: root
-    - mode: 400
-    - template: jinja
-    - source: salt://slurm/files/cgroup.conf 
-{% endif %}
-
-
-{% if salt['pillar.get']('slurm:AcctGatherEnergyType') in ['none','ipmi','ibmaem','cray','rapi'] -%}
-config_energy:
-  file.managed:
-    - name: /etc/slurm/acct_gather.conf
-    - user: slurm
-    - group: root
-    - mode: 644
-    - template: jinja
-    - source: salt://slurm/files/acct_gather.conf
-{% endif %}
+    - group: slurm
+    - mode: '0755'

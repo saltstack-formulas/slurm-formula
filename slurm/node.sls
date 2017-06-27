@@ -1,6 +1,9 @@
 {% from "slurm/map.jinja" import slurm with context %}
 include:
   - slurm
+  - slurm.munge
+  - slurm.energy
+  - slurm.topology
 
 slurm_service:
   file.directory:
@@ -17,19 +20,16 @@ slurm_service:
       - service: munge
       {%endif %}
 
-{% if salt['pillar.get']('slurm:CheckpointType') == 'blcr' -%}
-Install_pkg_checkpoint:
-  pkg.installed:
-    - pkgs:
-      - slurm-blcr
-      - blcr
-{% endif %}
-
-Bash_environment_mpi:
+slurm_config_logrotate:
   file.managed:
-    - name: /etc/profile.d/mpi.sh
+    - name: /etc/logrotate.d/slurmd
     - user: root
     - group: root
     - mode: '644'
-    - source: salt://slurm/files/profile_mpi.sh
+    - template: jinja
+    - source: salt://slurm/files/slurmd-logrotate.log
+
+
+
+
 
