@@ -1,0 +1,19 @@
+### SLURM Logrotate Configuration##
+/var/log/slurm/slurmdbd.log
+ {
+    compress
+    missingok
+    nocopytruncate
+    nocreate
+    delaycompress
+    nomail
+    notifempty
+    noolddir
+    rotate 10
+    sharedscripts
+    size=5M
+    create 640 slurm root
+    postrotate
+     /usr/bin/systemctl reload slurmdbd.service
+    endscript
+}

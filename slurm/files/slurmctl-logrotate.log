@@ -1,0 +1,19 @@
+{%- set  slurm_conf = pillar.get('slurm', {}) %}
+### SLURM Logrotate Configuration##
+{{ salt['pillar.get']('slurm:SlurmctldLogFile','/var/log/slurmctld.log' )}} {
+    compress
+    missingok
+    nocopytruncate
+    nocreate
+    delaycompress
+    nomail
+    notifempty
+    noolddir
+    rotate 10
+    sharedscripts
+    size=5M
+    create 640 slurm root
+    postrotate
+     /usr/bin/systemctl reload  slurmctld.service
+    endscript
+}
