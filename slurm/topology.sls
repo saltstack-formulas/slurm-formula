@@ -1,5 +1,7 @@
+{% from "slurm/map.jinja" import slurm with context %}
+
 {% if salt['pillar.get']('slurm:TopologyPlugin') in ['tree','3d_torus'] -%}
-slurm_topolgy:
+slurm_topology:
   file.managed:
     - name: {{slurm.etcdir}}/topology.conf
     - user: slurm
@@ -11,4 +13,5 @@ slurm_topolgy:
         slurm: {{ slurm }}
     - require:
       - pkg: {{ slurm.pkgSlurm }}
+      - user: slurm
 {% endif %}

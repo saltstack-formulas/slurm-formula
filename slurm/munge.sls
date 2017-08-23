@@ -1,3 +1,6 @@
+{% from "slurm/map.jinja" import slurm with context %}
+{%- set  slurmConf = pillar.get('slurm', {}) %}
+
 {%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
 slurm_munge:
   pkg.installed:
@@ -12,20 +15,21 @@ slurm_munge:
       - pkg: {{ slurm.pkgMunge }}
       - file: /etc/munge/munge.key
 
-{%  if salt['pillar.get']('slurm:MungeKey64') is defined -%}
-slurm_munge_key:
+{%  if slurmConf.MungeKey64 is defined -%}
+slurm_munge_key64:
   file.managed:
     - name: /etc/munge/munge.key64
     - user: munge
     - group: munge
     - mode: '0400'
-    - contents_pillar: slurm:MungeKey64
+    - contents_pillar: slurmConf.MungeKey64
     - require:
         - pkg: slurm_munge
   cmd.wait:
     - name: base64 -d /etc/munge/munge.key64 >/etc/munge/munge.key
     - watch:
         - file: /etc/munge/munge.key64
+slurm_munge_key:
   file.managed:
     - name: /etc/munge/munge.key
     - requre:
@@ -60,4 +64,5 @@ slurm_munge_service_config:
     - source: salt://slurm/files/munge.service
     - require_in:
         - pkg: slurm_munge
+{% endif %}
 {% endif %}

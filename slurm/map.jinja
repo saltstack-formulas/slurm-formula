@@ -1,5 +1,5 @@
 {% set slurm = salt['grains.filter_by'](
-  {
+
   {
   'RedHat': {
         'use_cgroup': False,
@@ -8,8 +8,9 @@
         'scontrol': '/usr/bin/scontrol',
         'slurmd': 'slurmd',
         'slurmd_bin': '/usr/sbin/slurmd',
-        'config': '/etc/slurm/slurm.conf',
+        'config': 'slurm.conf',
         'env': '/etc/default/slurmd',
+        'etcdir':'/etc/slurm',
 	    'plugindir': '/usr/lib64/slurm',
 	    'logdir': '/var/log/slurm',
 	    'rundir': '/var/run',
@@ -26,6 +27,11 @@
         'pkgSlurmDBD': 'slurm-slurmdbd',
         'pkgSlurmSQL': 'slurm-sql',
         'pkgMunge':'munge',
+        'pkgMySQLpython':'MySQL-python',
+        'pkgMungeLibs':'munge-libs',
+        'pkgMysqlSever':'mariadb-server',
+        'srvMysqlSever':'mariadb',
+
         },
   'Debian': {
         'use_cgroup': True,
@@ -34,8 +40,8 @@
         'scontrol': '/usr/bin/scontrol',
         'slurmd': 'slurmd',
         'slurmd_bin': '/usr/sbin/slurmd',
-	    'etcdir': '/etc/slurm-llnl',
-        'config': '/etc/slurm/slurm.conf',
+	    'etcdir': '/etc/slurm',
+        'config': 'slurm.conf',
         'env': '/etc/default/slurmd',
 	    'plugindir': '/usr/lib/x86_64-linux-gnu/slurm',
 	    'logdir': '/var/log/slurm-llnl',
@@ -54,8 +60,12 @@
         'pkgSlurmDevel':'slurm-devel',
         'pkgSlurmDBD': 'slurmdbd',
         'pkgMunge':'munge',
+        'pkgMySQLpython': 'python-mysqldb',
+        'pkgMungeLibs':'munge-libs',
+        'pkgMysqlSever':'mariadb-server',
+        'srvMysqlSever':'mariadb',
 
-},
+     },
   },merge=salt['pillar.get']('slurm:lookup'))
 
 %}

@@ -1,5 +1,7 @@
-{% if slurm.use_cgroup %}
-slurm_cgroup::
+{% from "slurm/map.jinja" import slurm with context %}
+#only if cgrups is active on pillars it is deffined
+{% if  salt['pillar.get']('slurm:UseCgroup','False') == True %}
+slurm_cgroup:
   file.managed:
     - name: {{slurm.etcdir}}/cgroup.conf
     - user: slurm
@@ -11,4 +13,6 @@ slurm_cgroup::
         slurm: {{ slurm }}
     - require_in:
       - service: slurm_node
+    - require:
+      - user: slurm
 {% endif %}

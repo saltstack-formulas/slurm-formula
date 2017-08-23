@@ -1,4 +1,6 @@
 {% from "slurm/map.jinja" import slurm with context %}
+{%- set  slurmConf = pillar.get('slurm', {}) %}
+
 
 slurm_client:
   pkg.installed:
@@ -11,6 +13,16 @@ slurm_client:
       - {{ slurm.pkgSlurmPlugins }}
     - refresh: True
 
+slurm_cgroups_config:
+  file.managed:
+    - name: {{slurm.etcdir}}/cgroup.conf
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - template: jinja
+    - source: salt://slurm/files/cgroup.conf
+    - context:
+        slurm: {{ slurm }}
 slurm_config:
   file.managed:
     - name: {{slurm.etcdir}}/{{ slurm.config }}
@@ -21,27 +33,21 @@ slurm_config:
     - source: salt://slurm/files/slurm.conf
     - context:
         slurm: {{ slurm }}
-{% if slurm.user_create|default(False) == True %}
-slurm_user:
   user.present:
     - name: slurm
-{% if slurm.homedir is defined %}
-    - home: {{ slurm.user_homedir }}
+{% if slurmConf.UserHomeDir is defined %}
+    - home: {{ slurmConf.UserHomeDir }}
 {% endif %}
-{% if slurm.user_uid is defined %}
-    - uid: {{ slurm.user_uid }}
+{% if slurmConf.userUid is defined %}
+    - uid: {{ slurmConf.UserUid }}
 {% endif %}
-{% if slurm.user_gid is defined %}
-    - gid: {{ slurm.user_gid }}
+{% if slurmConf.userGid is defined %}
+    - gid: {{ slurmConf.UserGid }}
 {% else %}
     - gid_from_name: True
 {% endif %}
     - require_in:
         - pkg: slurm_client
-        - file: slurm_topology
-        - file: slurm_cgroup
-        - file: slurm_config_energy
-{% endif %}
 
 #  user.present:
 #    - name: slurm
@@ -53,16 +59,12 @@ slurm_user:
 
 slurm_gres_conf:
   file.managed:
-    - name: {{ slurm.gres_config }}
+    - name: {{ slurm.etcdir }}/gres.conf
     - user: slurm
     - group: root
     - mode: '644'
     - template: jinja
     - source: salt://slurm/files/gres.conf
-
-
-
-
 slurm_logdir:
   file.directory:
     - name: {{ slurm.logdir }}

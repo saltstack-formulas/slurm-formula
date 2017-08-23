@@ -32,13 +32,12 @@ slurm_server:
     - reload: False
     - require:
       - file: Bug_rpm_no_create_default_environment
-  reload_slurmctld:
-    cmd.run:
-      - name: {{ slurm.scontrol }} reconfigure
-      - require:
-        - file: {{ slurm.config }}
-      - onchanges:
-        - file: {{ slurm.config }}
+  cmd.run:
+    - name: {{ slurm.scontrol }} reconfigure
+    - require:
+      - file: {{slurm.etcdir}}/{{ slurm.config }}
+    - onchanges:
+      - file: {{slurm.etcdir}}/{{ slurm.config }}
 
 slurm_config_logrotate_slurmctl:
   file.managed:
@@ -49,7 +48,13 @@ slurm_config_logrotate_slurmctl:
     - template: jinja
     - source: salt://slurm/files/slurmctl-logrotate.log
 
-
+slurm_state_location:
+  file.directory:
+    - name: {{ salt['pillar.get']('slurm:StateSaveLocation','/var/spool/slurm/' )}}
+    - user: slurm
+    - group: slurm
+    - dir_mode: 755
+    - file_mode: 644
 
 
 

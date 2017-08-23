@@ -1,3 +1,4 @@
+{% from "slurm/map.jinja" import slurm with context %}
 {% if salt['pillar.get']('slurm:AcctGatherEnergyType') in ['none','ipmi','ibmaem','cray','rapi'] -%}
 slurm_config_energy:
   file.managed:
@@ -11,4 +12,5 @@ slurm_config_energy:
         slurm: {{ slurm }}
     - require:
       - pkg: slurm_client
+      - user: slurm
 {% endif %}
