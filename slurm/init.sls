@@ -13,6 +13,15 @@ slurm_client:
       - {{ slurm.pkgSlurmPlugins }}
     - refresh: True
 
+slurm_config_dir:
+  file.directory:
+    - name: {{slurm.etcdir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}
+
 slurm_cgroups_config:
   file.managed:
     - name: {{slurm.etcdir}}/cgroup.conf
