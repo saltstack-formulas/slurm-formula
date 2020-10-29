@@ -1,7 +1,11 @@
 {% from "slurm/map.jinja" import slurm with context %}
 {%- set  slurmConf = pillar.get('slurm', {}) %}
 
-
+slurm_user:
+  group.present:
+    - system: True
+    - addusers:
+      - slurm
 slurm_client:
   pkg.installed:
     - name: {{ slurm.pkgSlurm }}
