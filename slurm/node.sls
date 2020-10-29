@@ -5,6 +5,12 @@ include:
   - slurm.energy
   - slurm.topology
 
+slurm_package:
+  pkg.installed:
+  - name: {{ slurm.pkgSlurmNode }}
+  - pkgs:
+    - {{ slurm.pkgSlurmNode }}
+
 slurm_service:
   file.directory:
     - name: /var/log/slurm/
@@ -16,6 +22,7 @@ slurm_service:
     - reload: False
     - require:
       - pkg: {{  slurm.pkgSlurm }}
+      - pkg: {{  slurm.pkgSlurmNode }}
       {%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
       - service: munge
       {%endif %}

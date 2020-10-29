@@ -2,50 +2,6 @@
 {%- set  slurmConf = pillar.get('slurm', {}) %}
 
 slurm_user:
-  group.present:
-    - system: True
-    - addusers:
-      - slurm
-slurm_client:
-  pkg.installed:
-    - name: {{ slurm.pkgSlurm }}
-    - pkgs:
-      - {{ slurm.pkgSlurm }}
-      {%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
-      - {{ slurm.pkgSlurmMuge }}
-      {% endif %}
-      - {{ slurm.pkgSlurmPlugins }}
-    - refresh: True
-
-slurm_config_dir:
-  file.directory:
-    - name: {{slurm.etcdir}}
-    - user: slurm
-    - group: root
-    - mode: '644'
-    - context:
-        slurm: {{ slurm }}
-
-slurm_cgroups_config:
-  file.managed:
-    - name: {{slurm.etcdir}}/cgroup.conf
-    - user: slurm
-    - group: root
-    - mode: '644'
-    - template: jinja
-    - source: salt://slurm/files/cgroup.conf
-    - context:
-        slurm: {{ slurm }}
-slurm_config:
-  file.managed:
-    - name: {{slurm.etcdir}}/{{ slurm.config }}
-    - user: slurm
-    - group: root
-    - mode: '644'
-    - template: jinja 
-    - source: salt://slurm/files/slurm.conf
-    - context:
-        slurm: {{ slurm }}
   user.present:
     - name: slurm
 {% if slurmConf.UserHomeDir is defined %}
@@ -61,14 +17,52 @@ slurm_config:
 {% endif %}
     - require_in:
         - pkg: slurm_client
+  group.present:
+    - name: slurm
+    - members:
+        - slurm
 
-#  user.present:
-#    - name: slurm
-#    - home: /localhome/slurm
-#    - uid: 550
-#    - gid: 510
-#    - gid_from_name: True
+slurm_client:
+  pkg.installed:
+    - name: {{ slurm.pkgSlurm }}
+    - pkgs:
+      - {{ slurm.pkgSlurm }}
+      {%  if salt['pillar.get']('slurm:AuthType') == 'munge' %}
+      - {{ slurm.pkgSlurmMunge }}
+      {% endif %}
+      - {{ slurm.pkgSlurmPlugins }}
+    - refresh: True
 
+slurm_config_dir:
+  file.directory:
+    - name: {{slurm.etcdir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}
+
+slurm_cgroups_config:
+  file.managed:
+    - name: {{ slurm.etcdir }}/cgroup.conf
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - template: jinja
+    - source: salt://slurm/files/cgroup.conf
+    - context:
+        slurm: {{ slurm }}
+
+slurmd_config:
+  file.managed:
+    - name: {{ slurm.etcdir }}/slurm.conf
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - template: jinja
+    - source: salt://slurm/files/slurm.conf.jinja
+    - context:
+        slurm: {{ slurm }}
 
 slurm_gres_conf:
   file.managed:
