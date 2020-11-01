@@ -33,6 +33,15 @@ slurm_client:
       - {{ slurm.pkgSlurmPlugins }}
     - refresh: True
 
+slurm_run_directory:
+  file.directory:
+    - name: {{slurm.rundir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}
+
 slurm_config_dir:
   file.directory:
     - name: {{slurm.etcdir}}
