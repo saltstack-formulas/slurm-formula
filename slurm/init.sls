@@ -38,7 +38,7 @@ slurm_config_dir:
     - name: {{slurm.etcdir}}
     - user: slurm
     - group: root
-    - mode: '644'
+    - mode: '755'
     - context:
         slurm: {{ slurm }}
 slurm_logdir:
@@ -46,13 +46,13 @@ slurm_logdir:
     - name: {{ slurm.logdir }}
     - user: slurm
     - group: root
-    - mode: '0755'
+    - mode: '755'
 slurm_rundir:
   file.directory:
     - name: {{slurm.rundir}}
     - user: slurm
     - group: root
-    - mode: '644'
+    - mode: '755'
     - context:
         slurm: {{ slurm }}
 slurmd_dir:
@@ -60,7 +60,7 @@ slurmd_dir:
     - name: {{slurm.slurmddir}}
     - user: slurm
     - group: root
-    - mode: '644'
+    - mode: '755'
     - context:
         slurm: {{ slurm }}
 slurmctld_dir:
@@ -68,7 +68,7 @@ slurmctld_dir:
     - name: {{slurm.slurmctlddir}}
     - user: slurm
     - group: root
-    - mode: '644'
+    - mode: '755'
     - context:
         slurm: {{ slurm }}
 slurm_plugin_dir:
@@ -76,7 +76,7 @@ slurm_plugin_dir:
     - name: {{slurm.plugindir}}
     - user: slurm
     - group: root
-    - mode: '644'
+    - mode: '755'
     - context:
         slurm: {{ slurm }}        
 
