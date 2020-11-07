@@ -33,15 +33,6 @@ slurm_client:
       - {{ slurm.pkgSlurmPlugins }}
     - refresh: True
 
-slurm_run_directory:
-  file.directory:
-    - name: {{slurm.rundir}}
-    - user: slurm
-    - group: root
-    - mode: '644'
-    - context:
-        slurm: {{ slurm }}
-
 slurm_config_dir:
   file.directory:
     - name: {{slurm.etcdir}}
@@ -50,6 +41,44 @@ slurm_config_dir:
     - mode: '644'
     - context:
         slurm: {{ slurm }}
+slurm_logdir:
+  file.directory:
+    - name: {{ slurm.logdir }}
+    - user: slurm
+    - group: root
+    - mode: '0755'
+slurm_rundir:
+  file.directory:
+    - name: {{slurm.rundir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}
+slurmd_dir:
+  file.directory:
+    - name: {{slurm.slurmddir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}
+slurmctld_dir:
+  file.directory:
+    - name: {{slurm.slurmctlddir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}
+slurm_plugin_dir:
+  file.directory:
+    - name: {{slurm.plugindir}}
+    - user: slurm
+    - group: root
+    - mode: '644'
+    - context:
+        slurm: {{ slurm }}        
 
 slurm_cgroups_config:
   file.managed:
@@ -81,9 +110,3 @@ slurm_gres_conf:
     - mode: '644'
     - template: jinja
     - source: salt://slurm/files/gres.conf
-slurm_logdir:
-  file.directory:
-    - name: {{ slurm.logdir }}
-    - user: slurm
-    - group: slurm
-    - mode: '0755'
