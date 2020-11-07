@@ -1,4 +1,4 @@
-ControlMachine=hackathon.covid19workflows-vu.surf-hosted.nl
+ControlMachine=packer-Ubuntu-18
 AuthType=auth/munge
 CacheGroups=0
 CryptoType=crypto/munge
@@ -6,13 +6,13 @@ JobCheckpointDir=/var/lib/slurm-llnl/checkpoint
 MpiDefault=none
 ProctrackType=proctrack/pgid
 ReturnToService=1
-SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
+SlurmctldPidFile={{ slurm.rundir }}/slurmctld.pid
 SlurmctldPort=6817
-SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
+SlurmdPidFile={{ slurm.rundir }}/slurmd.pid
 SlurmdPort=6818
-SlurmdSpoolDir=/var/lib/slurm-llnl/slurmd
+SlurmdSpoolDir={{ slurm.slurmddir }}
 SlurmUser=slurm
-StateSaveLocation=/var/lib/slurm-llnl/slurmctld
+StateSaveLocation={{ slurm.slurmctlddir }}
 SwitchType=switch/none
 TaskPlugin=task/none
 InactiveLimit=0
@@ -31,9 +31,9 @@ JobCompType=jobcomp/none
 JobAcctGatherFrequency=30
 JobAcctGatherType=jobacct_gather/none
 SlurmctldDebug=3
-SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmctldLogFile={{ slurm.logdir }}/slurmctld.log
 SlurmdDebug=3
-SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmdLogFile={{ slurm.logdir }}/slurmd.log
 DefMemPerNode=10240
-NodeName=hackathon.covid19workflows-vu.surf-hosted.nl CPUs=4 RealMemory=10240 TmpDisk=8192 State=UNKNOWN
-PartitionName=debug Nodes=hackathon.covid19workflows-vu.surf-hosted.nl Default=YES MaxTime=INFINITE State=UP
+NodeName=packer-Ubuntu-18 CPUs=4 RealMemory=10240 TmpDisk=8192 State=UNKNOWN
+PartitionName=debug Nodes=packer-Ubuntu-18 Default=YES MaxTime=INFINITE State=UP
