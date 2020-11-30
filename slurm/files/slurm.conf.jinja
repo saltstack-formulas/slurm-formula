@@ -1,4 +1,4 @@
-ControlMachine=packer-Ubuntu-18
+ControlMachine={{ slurm.control_machine}}
 AuthType=auth/munge
 CacheGroups=0
 CryptoType=crypto/munge
@@ -35,5 +35,5 @@ SlurmctldLogFile={{ slurm.logdir }}/slurmctld.log
 SlurmdDebug=3
 SlurmdLogFile={{ slurm.logdir }}/slurmd.log
 DefMemPerNode=10240
-NodeName=packer-Ubuntu-18 CPUs=4 RealMemory=10240 TmpDisk=8192 State=UNKNOWN
-PartitionName=debug Nodes=packer-Ubuntu-18 Default=YES MaxTime=INFINITE State=UP
+NodeName={{ slurm.control_machine}} CPUs=4 RealMemory=10240 TmpDisk=8192 State=UNKNOWN
+PartitionName=debug Nodes={{ slurm.control_machine}} Default=YES MaxTime=INFINITE State=UP
