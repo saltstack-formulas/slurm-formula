@@ -36,5 +36,5 @@ SlurmdDebug=3
 SlurmdLogFile={{ slurm.logdir }}/slurmd.log
 NodeName={{ slurm.control_machine}} CPUs=4 RealMemory=4000 TmpDisk=8192 State=UNKNOWN
 NodeName=compute[0-1] CPUs=1 RealMemory=4000 TmpDisk=8192 State=UNKNOWN
-PartitionName=hackathon Nodes={{ slurm.control_machine}},compute0 Default=YES MaxTime=INFINITE State=UP
-PartitionName=compute Nodes=compute[0-1],{{ slurm.control_machine}} Default=YES MaxTime=INFINITE State=UP
+PartitionName=compute1 Nodes=compute[0-1] Default=YES MaxTime=INFINITE State=UP
+PartitionName=compute2 Nodes=compute[2-3] Default=YES MaxTime=INFINITE State=UP
